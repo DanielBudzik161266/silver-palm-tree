@@ -1,0 +1,101 @@
+import json
+
+class ContactManager:
+    def __init__(self):
+        self.contacts = {}
+
+    def add_contact(self, name, number, email):
+        self.contacts[name] = {"number": number, "email": email}
+
+    def display_contacts(self):
+        if self.contacts:
+            for idx, (name, details) in enumerate(self.contacts.items(), start=1):
+                print(f"{idx}. {name} - {details['number']} - {details['email']}")
+        else:
+            print("No contacts available.")
+
+    def search_contacts(self, keyword):
+        results = {name: details for name, details in self.contacts.items() if keyword.lower() in name.lower()}
+        if results:
+            for idx, (name, details) in enumerate(results.items(), start=1):
+                print(f"{idx}. {name} - {details['number']} - {details['email']}")
+        else:
+            print("No contacts found.")
+
+    def edit_contact(self, name):
+        if name in self.contacts:
+            new_number = input(f"Enter new number for {name}: ")
+            new_email = input(f"Enter new email for {name}: ")
+            self.contacts[name] = {"number": new_number, "email": new_email}
+        else:
+            print("Contact not found.")
+
+    def delete_contact(self, name):
+        if name in self.contacts:
+            del self.contacts[name]
+        else:
+            print("Contact not found.")
+
+    def display_contact_details(self, name):
+        if name in self.contacts:
+            details = self.contacts[name]
+            print(f"Name: {name}\nNumber: {details['number']}\nEmail: {details['email']}")
+        else:
+            print("Contact not found.")
+
+    def save_contacts(self, filename):
+        with open(filename, 'w') as file:
+            json.dump(self.contacts, file)
+        print(f"Contacts saved to {filename}")
+
+    def load_contacts(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                self.contacts = json.load(file)
+            print(f"Contacts loaded from {filename}")
+        except FileNotFoundError:
+            print(f"{filename} not found.")
+
+manager = ContactManager()
+
+while True:
+    print("\n1. Add Contact")
+    print("2. Display Contacts")
+    print("3. Search Contacts")
+    print("4. Edit Contact")
+    print("5. Delete Contact")
+    print("6. Display Contact Details")
+    print("7. Save Contacts")
+    print("8. Load Contacts")
+    print("9. Exit")
+    choice = input("Enter choice: ")
+
+    if choice == '1':
+        name = input("Enter contact name: ")
+        number = input("Enter contact number: ")
+        email = input("Enter contact email: ")
+        manager.add_contact(name, number, email)
+    elif choice == '2':
+        manager.display_contacts()
+    elif choice == '3':
+        keyword = input("Enter search keyword: ")
+        manager.search_contacts(keyword)
+    elif choice == '4':
+        name = input("Enter the name of the contact to edit: ")
+        manager.edit_contact(name)
+    elif choice == '5':
+        name = input("Enter the name of the contact to delete: ")
+        manager.delete_contact(name)
+    elif choice == '6':
+        name = input("Enter the name of the contact to view details: ")
+        manager.display_contact_details(name)
+    elif choice == '7':
+        filename = input("Enter filename to save contacts: ")
+        manager.save_contacts(filename)
+    elif choice == '8':
+        filename = input("Enter filename to load contacts: ")
+        manager.load_contacts(filename)
+    elif choice == '9':
+        break
+    else:
+        print("Invalid choice")
